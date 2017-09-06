@@ -73,5 +73,5 @@ if __name__ == '__main__':
     img_row = 2
     img_col = 3
     img = np.random.randn(img_row, img_col)
-    idx = img_to_wmat(img)
-    print(idx)
+    w_mat = img_to_wmat(img)
+    print(w_mat)
