@@ -1,5 +1,5 @@
 import numpy as np
-
+import scipy.sparse as sp
 
 def img_neighbor_indices(img, neighbor, flag_out_of_index=-1):
     """Return the indices of 4 or 8 neigbor in each pixel."""
@@ -69,15 +69,27 @@ def img_to_wmat(img, neighbor=8):
     return(W_mat)
 
 
+def img_to_sparse_wmat(img, neighbor):
+    """Image convert to sparse weight adjacency matrix."""
+    img_row, img_col = img.shape
+    img_vec = img.flatten()
+    wmat_size = img_row*img_col
 
+    neighbor_idx = img_neighbor_indices(img, 8)
+    neighbor_idx = neighbor_idx.transpose()
 
+    sp_wmat = sp.lil_matrix((wmat_size, wmat_size))
 
+    for pixel, neighbor in enumerate(neighbor_idx):
+        neighbor = neighbor[neighbor > pixel]
+        sp_wmat[(pixel, neighbor)] = np.fabs(img_vec[pixel] - img_vec[neighbor])
 
+    return sp_wmat
 
 
 if __name__ == '__main__':
-    img_row = 3
-    img_col = 2
+    img_row = 10
+    img_col = 10
     img = np.random.randn(img_row, img_col)
-    w_mat = img_neighbor_indices(img, 4)
+    w_mat = img_to_sparse_wmat(img, 8)
     print(w_mat)
