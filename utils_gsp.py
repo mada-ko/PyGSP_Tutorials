@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.sparse as sp
 
+
 def img_neighbor_indices(img, neighbor, flag_out_of_index=-1):
     """Return the indices of 4 or 8 neigbor in each pixel."""
     img_row, img_col = img.shape
@@ -58,9 +59,11 @@ def img_to_wmat(img, neighbor=8):
     adj_idx = img_neighbor_indices(img, neighbor, -(img_row**2)*(img_col**2))
     idx_add = np.arange(start=0, stop=(img_row**2)*(img_col**2), step=img_row*img_col)
     add_mat = np.tile(idx_add, (8, 1))
+    print(add_mat)
     adj_idx = adj_idx + add_mat
 
-    idx = adj_idx[adj_idx > 0]
+    idx = adj_idx[adj_idx >= 0]
+    print(idx)
     W_mat = diff.copy()
     diff[idx] = -1
     W_mat = W_mat * (diff == -1)
@@ -88,8 +91,8 @@ def img_to_sparse_wmat(img, neighbor):
 
 
 if __name__ == '__main__':
-    img_row = 10
-    img_col = 10
+    img_row = 4
+    img_col = 4
     img = np.random.randn(img_row, img_col)
-    w_mat = img_to_sparse_wmat(img, 8)
+    w_mat = img_to_wmat(img, 8)
     print(w_mat)
